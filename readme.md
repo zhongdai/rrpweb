@@ -19,9 +19,20 @@ export FLASK_DEBUG=1
 ```bash
 flask db init
 flask db migrate
-flask run
 ```
 
+3. Insert dummy records
+
+```bash
+python makd_dummy_data.py
+```
+
+3. Launch the app
+
+```bash
+flask run
+```
+> under the first `rrp` folder
 
 ## TODO
 

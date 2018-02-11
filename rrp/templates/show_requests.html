@@ -8,8 +8,8 @@
         <dt>Email Address</dt> 
         <dd><input type=text size=30 name=email_addr value={{ user.email}} /></dd>  
         <dt>Data File Full Location</dt>
-        <dd><input type=text size=70 name=file_loc value={{ user.email}} /></dd>
-        <dt>Filter Rules</dt>
+        <dd><input type=text size=70 name=file_loc /></dd>
+        <dt>Filter Rules<span>(use ALT to select multiple items)</span></dt>
         <dd>
           <select multiple name=rules size={{ rules|length }}>
             {% for rule in rules %}
@@ -18,7 +18,7 @@
           </select>
         </dd>
 
-        <dt>Fields</dt>
+        <dt>Fields<span>(use ALT to select multiple items)</span></dt>
         <dd>
           <select multiple name=fields size={{ fields|length }}>
             {% for field in fields %}
