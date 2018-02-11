@@ -1,8 +1,9 @@
 {% extends "layout.html" %}
 {% block body %}
+<div class="add_entry">
   <h2>Request Detail</h2>
-  <p>Request Submitter: {{ request.user.name }}</p>
-  <p>Request ID: {{ request.id }}</p>
+  <dl>Request Submitter: {{ request.user.name }}</dl>
+  <dl>Request ID: {{ request.id }}</dl>
   <p>Request Path: {{ request.data_file_full_loc }}</p>
   <p>Comment: {{ request.comments|safe}}</p>
   <p>Rules:
@@ -17,6 +18,6 @@
       {% endfor %}
   </p>
   <a href="{{ url_for('del_request', request_id=request.id)}}">Delete It!</a>
-
+</div>
 
 {% endblock %}
