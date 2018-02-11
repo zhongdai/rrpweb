@@ -19,22 +19,6 @@ def main():
     print('Added User {}'.format(u.id))
     
 
-    for i in range(20):
-        req = Request(user_id=u.id, 
-                     data_file_full_loc='Dummy full path for file {}'.format(str(i)),
-                     comments = 'Dummy comments'
-                     )
-        try:
-            db.session.delete(req)
-        except:
-            pass
-        db.session.add(req)
-        print('Added Request {}'.format(req.id))
-
-    db.session.commit()
-    print('Adding requests')
-
-
     for i in range(10):
         f = Field(field_name='Dummy Field #{}'.format(i))
         try:

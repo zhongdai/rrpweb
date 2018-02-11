@@ -19,6 +19,16 @@ class TimestampMixin(object):
         db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
 
+request_rule_mapping = db.Table('request_rule_mapping',
+    db.Column('request_id', db.Integer, db.ForeignKey('request.id'), primary_key=True),
+    db.Column('rule_id', db.Integer, db.ForeignKey('rule.id'), primary_key=True)
+)
+
+request_field_mapping = db.Table('request_field_mapping',
+    db.Column('request_id', db.Integer, db.ForeignKey('request.id'), primary_key=True),
+    db.Column('field_id', db.Integer, db.ForeignKey('field.id'), primary_key=True)
+)
+
 class User(db.Model, TimestampMixin):
     id = db.Column(db.Integer, primary_key=True)
     salary_number = db.Column(db.String(7))
@@ -42,6 +52,10 @@ class Request(db.Model, TimestampMixin):
     comments = db.Column(db.Text)
     status = db.Column(db.String(32), default='Submitted')
 
+    fields = db.relationship("Field", secondary=request_field_mapping)
+    rules = db.relationship("Rule", secondary=request_rule_mapping)
+
+
     def __repr__(self):
         return '<Request %r>' % self.data_file_full_loc
 
@@ -62,18 +76,28 @@ class Field(db.Model, TimestampMixin):
     def __repr__(self):
         return '<Field %r>' % self.field_name
 
-request_rule_mapping = db.Table('request_rule_mapping',
-    db.Column('request_id', db.Integer, db.ForeignKey('request.id'), primary_key=True),
-    db.Column('rule_id', db.Integer, db.ForeignKey('rule.id'), primary_key=True)
-)
-
-request_field_mapping = db.Table('request_field_mapping',
-    db.Column('request_id', db.Integer, db.ForeignKey('request.id'), primary_key=True),
-    db.Column('field_id', db.Integer, db.ForeignKey('field.id'), primary_key=True)
-)
 
 
 """ Start the logic """
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.route('/help')
+def show_help():
+    return render_template('help.html')
+
+@app.route('/r/<request_id>')
+def show_request_detail(request_id):
+    if not session.get('logged_in'):
+        error = 'Please login first'
+        return render_template('login.html', error=error)
+    curr_user = User.query.get(session['user_id'])
+    r = Request.query.get_or_404(request_id)
+    if r.user_id == curr_user.id:
+        return render_template('show_request_detail.html', request=r)
+    else:
+        abort(404)
 
 @app.route('/')
 def show_requests():
@@ -112,8 +136,24 @@ def login():
 def add_request():
     if not session.get('logged_in'):
         abort(401)
+    curr_user = User.query.get(session['user_id'])
+    req = Request(
+        user_id = curr_user.id,
+        data_file_full_loc = request.form['file_loc'],
+        comments = request.form['comments']
+    )
+    for rule_id in request.form.getlist('ruleslist[]'):
+        print('Debug: rule id {}'.format(rule_id))
+        req.rules.append(Rule.query.get(rule_id))
+
+    for field_id in request.form.getlist('fieldslist[]'):
+        req.fields.append(Field.query.get(field_id))
+    
+    db.session.add(req)
+    db.session.commit()
+
     flash('New request was successfully posted')
-    return redirect(url_for('show_requests'))
+    return redirect(url_for('show_request_detail', request_id=req.id))
 
 @app.route('/logout')
 def logout():

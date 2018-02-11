@@ -1,28 +1,37 @@
 {% extends "layout.html" %}
 {% block body %}
+  <h2>Submit a request</h2>
   {% if session.logged_in %}
     <form action="{{ url_for('add_request') }}" method=post class=add-entry>
       <dl>
         <dt>Salary Number</dt>
-        <dd><input type=text size=30 name=salary_number value={{ user.salary_number }} /></dd>
+        <dd><input type=text size=30 name=salary_number value={{ user.salary_number }} readonly/></dd>
         <dt>Email Address</dt> 
-        <dd><input type=text size=30 name=email_addr value={{ user.email}} /></dd>  
+        <dd><input type=text size=30 name=email_addr value={{ user.email}} readonly/></dd>  
         <dt>Data File Full Location</dt>
         <dd><input type=text size=70 name=file_loc /></dd>
         <dt>Filter Rules<span>(use ALT to select multiple items)</span></dt>
         <dd>
-          <select multiple name=rules size={{ rules|length }}>
+          <select multiple size={{ rules|length }} name="ruleslist[]">
             {% for rule in rules %}
-              <option value={{ rule.id }}>{{ rule.name }}</option>
+              {% if rule.id == 1 %}
+                <option value={{ rule.id }} selected>{{ rule.name }}</option>
+              {% else %}
+                <option value={{ rule.id }}>{{ rule.name }}</option>
+              {% endif %}
             {% endfor %}
           </select>
         </dd>
 
         <dt>Fields<span>(use ALT to select multiple items)</span></dt>
         <dd>
-          <select multiple name=fields size={{ fields|length }}>
+          <select multiple size={{ fields|length }} name="fieldslist[]">
             {% for field in fields %}
-              <option value={{ field.id }}>{{ field.field_name }}</option>
+              {% if field.id == 1 %}
+                <option value={{ field.id }} selected>{{ field.field_name }}</option>
+              {% else %}
+                <option value={{ field.id }}>{{ field.field_name }}</option>
+              {% endif %}
             {% endfor %}
           </select>
         </dd>
@@ -34,10 +43,12 @@
     </form>
   {% endif %}
   <ul class=entries>
+  <h2>Existing requests</h2>
   {% for request in requests %}
     <li><h2>{{ request.created_at }}</h2>
       URL: {{ request.data_file_full_loc|safe }}</li>
       Status: {{ request.status }}
+      <a href="{{ url_for('show_request_detail', request_id=request.id) }}">Show Detail</a>
   {% else %}
     <li><em>Unbelievable.  No entries here so far</em></li>
   {% endfor %}

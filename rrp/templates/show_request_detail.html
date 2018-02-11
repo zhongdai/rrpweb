@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Request Detail</h2>
+  <p>Request ID: {{ request.id }}</p>
+  <p>Request Path: {{ request.data_file_full_loc }}</p>
+  <p>Comment: {{ request.comments|safe}}</p>
+  <p>Rules:
+      {% for item in request.rules %}
+        <ul>{{ item.name }}</ul>
+      {% endfor %}
+  </p>
+  
+  <p>Fields:
+      {% for item in request.fields %}
+        <ul>{{ item.field_name }}</ul>
+      {% endfor %}
+  </p>
+
+
+{% endblock %}

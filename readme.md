@@ -37,6 +37,7 @@ flask run
 ## TODO
 
 
-1. Add the dummy data
-2. Add test cases
-3. Add logic to save requests
+1. [x] Add the dummy data
+2. [ ] Add test cases
+3. [x] Add logic to save requests
+4. [ ] Improve the CSS 
