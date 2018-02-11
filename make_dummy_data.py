@@ -5,10 +5,12 @@ def main():
     # Create the first user
     u = User(salary_number='M043944',
              name='Zhong',
-             password='123',
              email='zhong@abc.com',
-             enabled_flag=1)
+             enabled_flag=1,
+             role='Admin')
 
+    u.password = '123456'
+            
     try:
         db.session.delete(u)
     except:

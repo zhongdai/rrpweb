@@ -43,7 +43,7 @@
     </form>
   {% endif %}
   <ul class=entries>
-  <h2>Existing requests</h2>
+  <h2>Existing requests (Status is Open)</h2>
   {% for request in requests %}
     <li><h2>{{ request.created_at }}</h2>
       URL: {{ request.data_file_full_loc|safe }}</li>

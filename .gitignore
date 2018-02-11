@@ -1,4 +1,5 @@
 rrp/__pycache__/
+migrations/
 *.db
 *.py[co]
 *.DS_*

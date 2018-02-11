@@ -41,3 +41,4 @@ flask run
 2. [ ] Add test cases
 3. [x] Add logic to save requests
 4. [ ] Improve the CSS 
+5. [ ] Protect the password

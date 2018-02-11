@@ -1,6 +1,11 @@
-<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
 <title>Research Request Portal</title>
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
 <div class=page>
   <h1>Research Request Portal</h1>
   <div class=metanav>
@@ -19,3 +24,5 @@
   {% endfor %}
   {% block body %}{% endblock %}
 </div>
+</body>
+</html>

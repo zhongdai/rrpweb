@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
   <h2>Request Detail</h2>
+  <p>Request Submitter: {{ request.user.name }}</p>
   <p>Request ID: {{ request.id }}</p>
   <p>Request Path: {{ request.data_file_full_loc }}</p>
   <p>Comment: {{ request.comments|safe}}</p>
@@ -15,6 +16,7 @@
         <ul>{{ item.field_name }}</ul>
       {% endfor %}
   </p>
+  <a href="{{ url_for('del_request', request_id=request.id)}}">Delete It!</a>
 
 
 {% endblock %}

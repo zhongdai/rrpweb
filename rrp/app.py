@@ -5,6 +5,9 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
+from werkzeug.security import generate_password_hash, \
+     check_password_hash
+
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////rrpdb.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:my-secret-pw@localhost/rrpdb'
@@ -33,7 +36,7 @@ class User(db.Model, TimestampMixin):
     id = db.Column(db.Integer, primary_key=True)
     salary_number = db.Column(db.String(7))
     name = db.Column(db.String(128))
-    password = db.Column(db.String(128))
+    hs_password = db.Column(db.String(128))
     email = db.Column(db.String(128))
     role = db.Column(db.String(32))
     enabled_flag = db.Column(db.Boolean)
@@ -42,8 +45,17 @@ class User(db.Model, TimestampMixin):
     def __repr__(self):
         return '<User %r>' % self.salary_number
 
+    @property
+    def password(self):
+        return self.hs_password
+    
+    @password.setter
+    def password(self, v):
+        self.hs_password = generate_password_hash(v)
+
+
     def is_valid_user(self, password):
-        return self.password == password and self.enabled_flag is not None
+        return check_password_hash(self.hs_password, password) and self.enabled_flag is not None
 
 class Request(db.Model, TimestampMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -131,6 +143,21 @@ def login():
             flash('You were logged, welcome {uname}'.format(uname=u.name))
             return redirect(url_for('show_requests'))
     return render_template('login.html', error=error)
+
+@app.route('/del/<request_id>')
+def del_request(request_id):
+    if not session.get('logged_in'):
+        error = 'Please login first'
+        return render_template('login.html', error=error)
+    curr_user = User.query.get(session['user_id'])
+    r = Request.query.get_or_404(request_id)
+    if r.user_id == curr_user.id:
+        db.session.delete(r)
+        db.session.commit()
+        flash('Request has been deleted')
+        return redirect(url_for('show_requests'))
+    else:
+        abort(404)
 
 @app.route('/add', methods=['POST'])
 def add_request():
