@@ -119,7 +119,7 @@ def show_requests():
     else:
         fields = Field.query.all()
         rules = Rule.query.order_by('created_at').all()
-        requests = Request.query.all()
+        requests = sorted(Request.query.all(),key=lambda x:x.created_at, reverse=True)
         curr_user = User.query.get(session['user_id'])
         return render_template('show_requests.html', 
                                 requests=requests, 
@@ -180,7 +180,7 @@ def add_request():
     db.session.commit()
 
     flash('New request was successfully posted')
-    return redirect(url_for('show_request_detail', request_id=req.id))
+    return redirect(url_for('show_requests'))
 
 @app.route('/logout')
 def logout():

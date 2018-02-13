@@ -1,28 +1,61 @@
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>Research Request Portal</title>
-<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-</head>
+  <title>Research Request Portal</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+
+</head>
 <body>
-<div class=page>
-  <h1>Research Request Portal</h1>
-  <div class=metanav>
-    <a href='/'>Home</a>
-    |
-    <a href="{{ url_for('show_help') }}">Help</a>
-    |
-  {% if not session.logged_in %}
-    <a href="{{ url_for('login') }}">Log In</a>
-  {% else %}
-    <a href="{{ url_for('logout') }}">Log Out</a>
-  {% endif %}
-  </div>
-  {% for message in get_flashed_messages() %}
-    <div class=flash>{{ message }}</div>
-  {% endfor %}
-  {% block body %}{% endblock %}
+
+
+<div class="container">
+
+ <div class="jumbotron">
+     <h1>Research Request Portal</h1>
+    <blockquote>
+        <p>A web portal to collect data enrichment requests from Customer Research team.</p>
+        <footer>In-house developed by Data Science</footer>
+    </blockquote>
+ </div>
+
+ <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="{{ url_for('show_requests')}}">Home</a>
+          </div>
+          <ul class="nav navbar-nav">
+            <li><a href="{{ url_for('show_help') }}">Help</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+              {% if not session.logged_in %}
+              <li><a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"></span>Log In</a></li>
+              {% else %}
+                <li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"></span>Log Out</a></li>
+              {% endif %}
+          </ul>
+        </div>
+</nav>
+
+
+{% for message in get_flashed_messages() %}
+<div class="alert alert-success">
+    {{ message }}
 </div>
+{% endfor %}
+
+{% block container %}{% endblock %}
+</div>
+
 </body>
 </html>

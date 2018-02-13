@@ -1,56 +1,76 @@
 {% extends "layout.html" %}
-{% block body %}
-  <h2>Submit a request</h2>
-  {% if session.logged_in %}
-    <form action="{{ url_for('add_request') }}" method=post class=add-entry>
-      <dl>
-        <dt>Salary Number</dt>
-        <dd><input type=text size=30 name=salary_number value={{ user.salary_number }} readonly/></dd>
-        <dt>Email Address</dt> 
-        <dd><input type=text size=30 name=email_addr value={{ user.email}} readonly/></dd>  
-        <dt>Data File Full Location</dt>
-        <dd><input type=text size=70 name=file_loc /></dd>
-        <dt>Filter Rules<span>(use ALT to select multiple items)</span></dt>
-        <dd>
-          <select multiple size={{ rules|length }} name="ruleslist[]">
-            {% for rule in rules %}
-              {% if rule.id == 1 %}
-                <option value={{ rule.id }} selected>{{ rule.name }}</option>
-              {% else %}
-                <option value={{ rule.id }}>{{ rule.name }}</option>
-              {% endif %}
-            {% endfor %}
-          </select>
-        </dd>
 
-        <dt>Fields<span>(use ALT to select multiple items)</span></dt>
-        <dd>
-          <select multiple size={{ fields|length }} name="fieldslist[]">
-            {% for field in fields %}
-              {% if field.id == 1 %}
-                <option value={{ field.id }} selected>{{ field.field_name }}</option>
-              {% else %}
-                <option value={{ field.id }}>{{ field.field_name }}</option>
-              {% endif %}
-            {% endfor %}
-          </select>
-        </dd>
-
-        <dt>Additional Comments:
-        <dd><textarea name=comments rows=5 cols=40></textarea>
-        <dd><input type=submit value=Submit>
-      </dl>
-    </form>
-  {% endif %}
-  <ul class=entries>
-  <h2>Existing requests (Status is Open)</h2>
-  {% for request in requests %}
-    <li><h2>{{ request.created_at }}</h2>
-      URL: {{ request.data_file_full_loc|safe }}</li>
-      Status: {{ request.status }}
-      <a href="{{ url_for('show_request_detail', request_id=request.id) }}">Show Detail</a>
-  {% else %}
-    <li><em>Unbelievable.  No entries here so far</em></li>
-  {% endfor %}
-  </ul>
+{% block container %}
+<div class="row">
+    <div class="col-sm-4">
+    <h1>New Request</h1>
+            <form action="{{ url_for('add_request') }}" method="post">
+                <div class="form-group">
+                    <label for="salary-number">Salary Number:</label>
+                    <input name="salary_number" type="text" class="form-control" id="disabledTextInput" value="{{ user.salary_number }}" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="Email">Email:</label>
+                    <input name="email_addr" type="email" class="form-control" id="disabledTextInput" value="{{ user.email }}" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="datafile">Data File:</label>
+                    <input name="file_loc" type="text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="comments">Comments:</label>
+                    <textarea name="comments" type="text" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="rules">Rules:</label>
+                    <select multiple class="selectpicker" name="ruleslist[]">
+                        {% for rule in rules %}
+                          <option value="{{ rule.id }}">{{ rule.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="rules">Fields:</label>
+                    <select multiple class="selectpicker" name="fieldslist[]">
+                        {% for field in fields %}
+                          <option value="{{ field.id }}">{{ field.field_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+    </div>
+    <div class="col-sm-8">
+    <h1>Existing Requests</h1>
+    <p>Only for current logged user</p> 
+            <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Status</th>
+                        <th>Action</th>
+                        <th>Request ID</th>
+                        <th>Data File</th>
+                        <th>Submitted Date</th>
+                        <th>Last Updated Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for request in requests %}
+                      <tr>
+                        <td><span class="label label-info">{{ request.status }}</span></td>
+                        {% if request.status == 'Submitted' %}
+                          <td><a href="{{ url_for('del_request', request_id=request.id)}}" class="btn btn-danger btn-xs" role="button">Delete</a></td>
+                        {% else %}
+                          <td></td>
+                        {% endif %}
+                        <td><a href="#">#{{ request.id }}</a></td>
+                        <td>{{ request.data_file_full_loc }}</td>
+                        <td>{{ request.created_at }}</td>
+                        <td>{{ request.updated_at }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+        </div>
+    </div>
 {% endblock %}
